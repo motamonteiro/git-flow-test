@@ -45,12 +45,12 @@ Adicione `"prettus/laravel-validation": "1.1.*"` no composer.json
 
 ``` json
 "require": {
-        "php": ">=5.5.9",
-        "laravel/framework": "5.2.*",
+        "php": ">=5.6.4",
+        "laravel/framework": "5.3.*",
         "prettus/l5-repository": "^2.6",
         "prettus/laravel-validation": "1.1.*",
-        "league/fractal": "^0.13.0",
-        "barryvdh/laravel-cors": "^0.8.1"
+        "league/fractal": "^0.14.0",
+        "barryvdh/laravel-cors": "^0.8.2"
     },
 ```
 
