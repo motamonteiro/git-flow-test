@@ -1,27 +1,131 @@
-# Laravel PHP Framework
+Segue abaixo o passo a passo das configurações para gerar a release 0.0.1:
+ 
 
-[![Build Status](https://travis-ci.org/laravel/framework.svg)](https://travis-ci.org/laravel/framework)
-[![Total Downloads](https://poser.pugx.org/laravel/framework/d/total.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/framework/v/stable.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/framework/v/unstable.svg)](https://packagist.org/packages/laravel/framework)
-[![License](https://poser.pugx.org/laravel/framework/license.svg)](https://packagist.org/packages/laravel/framework)
+Crie uma nova aplicação Laravel:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as authentication, routing, sessions, queueing, and caching.
+``` bash
+laravel new minha-aplicacao
+```
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications. A superb inversion of control container, expressive migration system, and tightly integrated unit testing support give you the tools you need to build any application with which you are tasked.
+Configure o arquivo `.env`
 
-## Official Documentation
+Gere uma chave para a aplicação:
+``` bash
+php artisan key:generate
+```
 
-Documentation for the framework can be found on the [Laravel website](http://laravel.com/docs).
+Verifique a instalação com o comando:
 
-## Contributing
+ ``` bash
+php artisan serve
+ ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
+ Altere o nome da aplicação com o comando:
 
-## Security Vulnerabilities
+  ``` bash
+ php artisan app:name MinhaAplicacao
+  ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
 
-## License
+Coloque as dependências do projeto no `composer.json` executando os seguintes passos:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
+``` bash
+composer require prettus/l5-repository
+```
+
+``` bash
+composer require league/fractal
+```
+
+``` bash
+composer barryvdh/laravel-cors
+```
+
+Adicione `"prettus/laravel-validation": "1.1.*"` no composer.json
+
+``` json
+"require": {
+        "php": ">=5.5.9",
+        "laravel/framework": "5.2.*",
+        "prettus/l5-repository": "^2.6",
+        "prettus/laravel-validation": "1.1.*",
+        "league/fractal": "^0.13.0",
+        "barryvdh/laravel-cors": "^0.8.1"
+    },
+```
+
+No seu `config/app.php` adicione `Prettus\Repository\Providers\RepositoryServiceProvider::class`  e `Barryvdh\Cors\ServiceProvider::class` no final do array providers:
+
+``` php
+'providers' => [
+    ...
+    Prettus\Repository\Providers\RepositoryServiceProvider::class,
+    Barryvdh\Cors\ServiceProvider::class,
+],
+```
+
+Publique a configuração
+
+``` bash
+php artisan vendor:publish
+```
+
+Crie o arquivo `app/Serializers/DataArraySerializer.php`
+
+``` php
+<?php
+
+namespace MinhaAplicacao\Serializers;
+
+
+use League\Fractal\Serializer\ArraySerializer;
+
+class DataArraySerializer extends ArraySerializer
+{
+
+    /**
+     * Serialize a collection.
+     *
+     * @param string $resourceKey
+     * @param array  $data
+     *
+     * @return array
+     */
+    public function collection($resourceKey, array $data)
+    {
+        return $data;
+        //return ["data" => $data];
+    }
+    /**
+     * Serialize an item.
+     *
+     * @param string $resourceKey
+     * @param array  $data
+     *
+     * @return array
+     */
+    public function item($resourceKey, array $data)
+    {
+        return $data;
+        //return ["data" => $data];
+    }
+
+}
+```
+
+Altere o serializer do arquivo `config/repository.php`
+
+``` php
+'fractal'=>[
+        'params'=>[
+            'include'=>'include'
+        ],
+        'serializer' => \MinhaAplicacao\Serializers\DataArraySerializer::class
+    ],
+```
+
+Rode a aplicação
+
+``` bash
+php artisan serve
+```
